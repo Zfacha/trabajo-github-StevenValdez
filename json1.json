@@ -1,0 +1,77 @@
+// Esperar a que todo el contenido del DOM esté cargado
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM cargado correctamente. Script de manipulación activo.");
+
+    // 1. Seleccionar elementos existentes en tu página
+    const titulo = document.querySelector("h1");
+    const cuerpo = document.body;
+
+    // 2. Modificar texto dinámicamente al hacer clic en el título principal (si existe)
+    if (titulo) {
+        titulo.style.cursor = "pointer";
+        titulo.title = "Haz clic para resaltar el título";
+        
+        titulo.addEventListener("click", () => {
+            titulo.classList.toggle("resaltado");
+            titulo.textContent = titulo.textContent.includes("(Actualizado)") 
+                ? titulo.textContent.replace(" (Actualizado)", "") 
+                : titulo.textContent + " (Actualizado)";
+        });
+    }
+
+    // 3. Crear un panel interactivo de manipulación del DOM al final de la página
+    const panelDOM = document.createElement("section");
+    panelDOM.style.marginTop = "30px";
+    panelDOM.style.padding = "20px";
+    panelDOM.style.border = "2px solid #333";
+    panelDOM.style.borderRadius = "8px";
+
+    panelDOM.innerHTML = `
+        <h3>Panel Interactivo - Manipulación del DOM</h3>
+        <button id="btnTema" type="button">Cambiar Modo Oscuro / Claro</button>
+        <div style="margin-top: 15px;">
+            <input type="text" id="inputNota" placeholder="Escribe un comando o nota de Git..." />
+            <button id="btnAgregar" type="button">Agregar elemento</button>
+        </div>
+        <ul id="listaNotas" style="margin-top: 15px;"></ul>
+    `;
+
+    cuerpo.appendChild(panelDOM);
+
+    // 4. Evento para alternar estilos CSS del body (Modo Oscuro / Claro)
+    const btnTema = document.getElementById("btnTema");
+    let modoOscuro = false;
+
+    btnTema.addEventListener("click", () => {
+        modoOscuro = !modoOscuro;
+        cuerpo.style.backgroundColor = modoOscuro ? "#121212" : "";
+        cuerpo.style.color = modoOscuro ? "#f5f5f5" : "";
+        panelDOM.style.borderColor = modoOscuro ? "#f5f5f5" : "#333";
+    });
+
+    // 5. Evento para crear y eliminar nodos (elementos <li>) en el DOM
+    const inputNota = document.getElementById("inputNota");
+    const btnAgregar = document.getElementById("btnAgregar");
+    const listaNotas = document.getElementById("listaNotas");
+
+    btnAgregar.addEventListener("click", () => {
+        const texto = inputNota.value.trim();
+        if (texto === "") return;
+
+        const nuevoItem = document.createElement("li");
+        nuevoItem.textContent = texto + " ";
+
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "Eliminar";
+        btnEliminar.type = "button";
+        btnEliminar.style.marginLeft = "10px";
+
+        btnEliminar.addEventListener("click", () => {
+            listaNotas.removeChild(nuevoItem);
+        });
+
+        nuevoItem.appendChild(btnEliminar);
+        listaNotas.appendChild(nuevoItem);
+        inputNota.value = "";
+    });
+});
